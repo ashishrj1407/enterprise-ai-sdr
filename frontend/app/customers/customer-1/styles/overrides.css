@@ -1,0 +1,37 @@
+/* Customer-1 stylesheet — loaded only when Styles slot resolves to this customer. */
+
+.theme-customer-1 {
+  --accent: #eab308;
+}
+
+.theme-customer-1 .form-zone-pivot {
+  background: var(--card);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.theme-customer-1 .customer-1-lead-form {
+  box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.25);
+}
+
+/* Customer-1 AppShell layout chrome */
+.customer-1-ribbon {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: linear-gradient(90deg, #eab308, #facc15);
+  color: #422006;
+  font-size: 0.85rem;
+}
+
+.customer-1-footer {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px dashed #eab308;
+  border-radius: 10px;
+  background: rgba(254, 243, 199, 0.7);
+  color: #713f12;
+  font-size: 0.85rem;
+}

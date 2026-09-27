@@ -1,0 +1,114 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: poc_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: generic
+      MYSQL_USER: poc
+      MYSQL_PASSWORD: pocpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - poc_mysql_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 8s
+      timeout: 5s
+      retries: 15
+      start_period: 25s
+
+  redis:
+    image: redis:7-alpine
+    container_name: poc_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: poc_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment: &backend_env
+      DATABASE_URL: mysql+pymysql://poc:pocpass@db:3306/generic?charset=utf8mb4
+      PLATFORM_DATABASE: generic
+      RUN_MIGRATIONS_ON_STARTUP: "false"
+      DEFAULT_CUSTOMER_ID: customer-3
+      CUSTOMER_HOST_MAP: "customer-1.localhost:customer-1,customer-2.localhost:customer-2,customer-3.localhost:customer-3"
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    command: ["api"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 20s
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: poc_worker
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    environment:
+      <<: *backend_env
+    command: ["worker"]
+
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: poc_beat
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    environment:
+      <<: *backend_env
+    command: ["beat"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - BACKEND_ORIGIN=http://backend:8000
+    container_name: poc_frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      BACKEND_ORIGIN: http://backend:8000
+    ports:
+      - "3000:3000"
+
+volumes:
+  poc_mysql_data:

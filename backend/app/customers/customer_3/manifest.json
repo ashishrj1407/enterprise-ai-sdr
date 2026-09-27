@@ -1,0 +1,10 @@
+{
+  "customer_id": "customer-3",
+  "display_name": "BaseCo (Customer C — base only)",
+  "host": "customer-3.localhost",
+  "schema": "schema_customer_3",
+  "endpoint": "/base-endpoint1",
+  "result_type": "string",
+  "extra_fields": [],
+  "description": "Uses base product endpoint and schema only — no custom routes."
+}

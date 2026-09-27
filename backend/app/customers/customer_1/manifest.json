@@ -1,0 +1,11 @@
+{
+  "customer_id": "customer-1",
+  "display_name": "GreenGrid Solar (Customer A)",
+  "host": "customer-1.localhost",
+  "schema": "schema_customer_1",
+  "endpoint": "/customer-1-endpoint",
+  "result_type": "integer",
+  "extra_fields": ["roof_size_sqft", "monthly_energy_bill"],
+  "min_base_revision": "b001_leads_base",
+  "description": "Solar-fit score as an integer; extra lead fields on the form."
+}

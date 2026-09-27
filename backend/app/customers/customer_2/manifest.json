@@ -1,0 +1,11 @@
+{
+  "customer_id": "customer-2",
+  "display_name": "FinTrust Loans (Customer B)",
+  "host": "customer-2.localhost",
+  "schema": "schema_customer_2",
+  "endpoint": "/customer-2-endpoint",
+  "result_type": "percentage",
+  "extra_fields": ["consent_given", "product_type"],
+  "min_base_revision": "b001_leads_base",
+  "description": "Compliance readiness as a percentage; consent fields on the form."
+}
